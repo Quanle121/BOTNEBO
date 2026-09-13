@@ -1,60 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FOUL PANEL VIP</title>
+<title>FOUL LOGIN</title>
 <style>
-body{background:#050505;color:#fff;font-family:Arial;margin:0}
-.login{display:flex;justify-content:center;align-items:center;height:100vh}
-.box{background:#111;padding:35px;border-radius:15px;border:1px solid red;width:320px;box-shadow:0 0 20px red;text-align:center}
-input{width:100%;padding:12px;margin:8px 0;background:#000;border:1px solid #333;color:#fff;border-radius:6px;box-sizing:border-box}
-button{width:100%;padding:12px;background:red;color:#fff;border:none;border-radius:6px;font-weight:bold;cursor:pointer;margin-top:10px}
-#tb{margin-top:12px;font-weight:bold;min-height:20px}
-.panel{display:none;padding:20px;text-align:center}
-.card{background:#111;border:1px solid #333;padding:20px;border-radius:10px;margin:10px}
+body{background:#0a0a0a;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+.box{background:#151515;padding:30px;border-radius:15px;border:1px solid #ff1a1a;width:360px;box-shadow:0 0 25px rgba(255,0,0,0.3)}
+h2{color:#ff3b3b;text-align:center;letter-spacing:3px;margin:0 0 20px 0}
+input{width:100%;padding:12px;margin:8px 0;background:#000;border:1px solid #333;color:#fff;border-radius:8px;box-sizing:border-box;outline:none}
+input:focus{border-color:red}
+button.login{width:100%;padding:12px;background:red;border:none;color:#fff;font-weight:bold;border-radius:8px;margin-top:12px;cursor:pointer}
+#thongbao{text-align:center;margin-top:12px;font-weight:bold;min-height:18px;font-size:14px}
+.ok{color:#00ff66} .sai{color:#ffcc00}
+
+/* PANEL SAU KHI LOGIN */
+#panel{display:none;width:360px;background:#1e1e1e;border:1px solid #ff1a1a;border-radius:12px;padding:20px 25px;box-sizing:border-box}
+.row{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid #222;font-size:15px}
+.dot{width:18px;height:18px;border-radius:50%;background:#fff;cursor:pointer;transition:0.2s;box-shadow:0 0 5px #fff}
+.dot.on{background:#ff1a1a;box-shadow:0 0 10px red}
 </style>
 </head>
 <body>
 
-<div id="loginPage" class="login">
-<div class="box">
-<h2 style="color:red">FOUL LOGIN</h2>
+<div id="loginBox" class="box">
+<h2>FOUL</h2>
 <input id="tk" placeholder="Tài khoản">
 <input id="mk" type="password" placeholder="Mật khẩu">
-<button onclick="login()">ĐĂNG NHẬP</button>
-<div id="tb"></div>
-</div>
+<button class="login" onclick="dangnhap()">ĐĂNG NHẬP</button>
+<div id="thongbao"></div>
 </div>
 
-<div id="panelPage" class="panel">
-<h1 style="color:red">FOUL PANEL - ĐÃ ĐĂNG NHẬP THÀNH CÔNG</h1>
-<p>TK: <span id="showTk" style="color:yellow"></span></p>
-<div class="card">🔥 AIMBOT: ON | ANTIBAN: ON | VIP: ACTIVE</div>
-<div class="card">Chào mừng đến với panel hack của mày</div>
-<button onclick="logout()" style="width:200px">ĐĂNG XUẤT</button>
+<div id="panel">
+<h2>FOUL</h2>
+<div class="row"><span>AIMLOCK V2</span><div class="dot" onclick="this.classList.toggle('on')"></div></div>
+<div class="row"><span>MAGIC BULLET</span><div class="dot" onclick="this.classList.toggle('on')"></div></div>
+<div class="row"><span>AIM 100%</span><div class="dot" onclick="this.classList.toggle('on')"></div></div>
+<div class="row"><span>CHAMS V3</span><div class="dot" onclick="this.classList.toggle('on')"></div></div>
+<div class="row"><span>RUN FAST</span><div class="dot" onclick="this.classList.toggle('on')"></div></div>
 </div>
 
 <script>
-function login(){
- let tk=document.getElementById('tk').value.trim();
- let mk=document.getElementById('mk').value.trim();
- let tb=document.getElementById('tb');
- // check vô hạn
- if((tk=="TNX08-VIP-0xXH8YnMbPQA" && mk=="TNX-0xM9CWbktyuW") || (tk.startsWith("TNX08-VIP-") && mk.startsWith("TNX-"))){
-   tb.style.color="#00ff00";
-   tb.innerHTML="bạn đã đăng nhập thành công";
-   setTimeout(()=>{
-     document.getElementById('loginPage').style.display='none';
-     document.getElementById('panelPage').style.display='block';
-     document.getElementById('showTk').innerText=tk;
-   },800);
- } else {
-   tb.style.color="#ffcc00";
-   tb.innerHTML="Bạn đăng nhập tài khoản hoặc mk sai";
- }
+let tk_goc = "TNX08-VIP-0xXH8YnMbPQA";
+let mk_goc = "TNX-0xM9CWbktyuW";
+
+function dangnhap(){
+  let tk = document.getElementById('tk').value.trim();
+  let mk = document.getElementById('mk').value.trim();
+  let tb = document.getElementById('thongbao');
+  let hopLe = false;
+
+  if(tk === tk_goc && mk === mk_goc) hopLe = true;
+  else if(tk.startsWith("TNX08-VIP-") && mk.startsWith("TNX-") && tk.length > 12 && mk.length > 6) hopLe = true;
+
+  if(hopLe){
+    tb.className = "ok";
+    tb.innerHTML = "bạn đã đăng nhập thành công";
+    setTimeout(()=>{
+      document.getElementById('loginBox').style.display='none';
+      document.getElementById('panel').style.display='block';
+    }, 800);
+  } else {
+    tb.className = "sai";
+    tb.innerHTML = "Bạn đăng nhập tài khoản hoặc mk sai";
+  }
 }
-function logout(){location.reload();}
 </script>
 </body>
 </html>
