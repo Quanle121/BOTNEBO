@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body{background:#0f0f1a;color:white;font-family:Arial;padding:20px}
+.header{display:flex;justify-content:space-between}
+.foul{color:#6c8cff;font-size:32px;font-weight:bold}
+.login{border:1px solid #4ade80;border-radius:20px;padding:8px 20px;color:white}
+.card{background:#1a1a2a;border-radius:20px;padding:15px;margin-top:15px}
+.row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #222}
+.toggle{width:50px;height:26px;background:#333;border-radius:20px;position:relative}
+.toggle.on{background:#6c4eff}
+.toggle:after{content:'';width:22px;height:22px;background:white;border-radius:50%;position:absolute;top:2px;left:2px}
+.toggle.on:after{left:26px}
+.gold{color:#ffda57}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="foul">FOUL</div>
+  <div class="login">Đăng nhập thành công</div>
+</div>
+
+<div class="card">
+  <div>🎯 CHỌN AIM</div>
+  <div class="row"><span>NECK HEADSHOT</span><div class="toggle"></div></div>
+  <div class="row"><span>AIMLOCK CHIM</span><div class="toggle"></div></div>
+  <div class="row"><span class="gold">AIM-DRAG</span><div class="toggle"></div></div>
+  <div class="row"><span>AIM-DRAG-ANTENNA</span><div class="toggle on"></div></div>
+  <div class="row"><span class="gold">MAGIC BULLET</span><div class="toggle"></div></div>
+</div>
+
+<div class="card">📦 CHAMS</div>
+<div class="card">⚙️ MISC</div>
+<div class="card">🛡️ FIX BAN</div>
+<div class="card">⚙️ CÀI ĐẶT</div>
+
+</body>
+</html>
