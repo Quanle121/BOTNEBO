@@ -10,7 +10,7 @@ h2{color:red;text-align:center;letter-spacing:4px;margin:0 0 25px}
 input{width:100%;padding:13px;margin:8px 0;background:#000;border:1px solid #333;color:#fff;border-radius:8px;box-sizing:border-box}
 button{width:100%;padding:13px;background:red;border:none;color:#fff;font-weight:bold;border-radius:8px;margin-top:15px;cursor:pointer}
 #thongbao{text-align:center;margin-top:12px;font-weight:bold;min-height:20px}
-.ok{color:#00ff66} .sai{color:#ffcc00}
+.ok{color:#00ff66} .sai{color:#ff4444}
 #panel{display:none}
 .item{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid #222;font-size:14px}
 .dot{width:20px;height:20px;border-radius:50%;background:#fff;cursor:pointer}
@@ -18,7 +18,6 @@ button{width:100%;padding:13px;background:red;border:none;color:#fff;font-weight
 </style>
 </head>
 <body>
-
 <div id="loginBox" class="box">
 <h2>FOUL</h2>
 <input id="tk" placeholder="Tài khoản">
@@ -26,7 +25,6 @@ button{width:100%;padding:13px;background:red;border:none;color:#fff;font-weight
 <button onclick="login()">ĐĂNG NHẬP</button>
 <div id="thongbao"></div>
 </div>
-
 <div id="panel" class="box">
 <h2>FOUL</h2>
 <div class="item"><span>AIMLOCK V2</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
@@ -35,26 +33,31 @@ button{width:100%;padding:13px;background:red;border:none;color:#fff;font-weight
 <div class="item"><span>CHAMS V3</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
 <div class="item"><span>RUN FAST</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
 </div>
-
 <script>
+// Tự dọn rác mỗi khi mở trang
+(function autoClean(){
+ let data=JSON.parse(localStorage.getItem('foul_acc')||"[]");
+ let loc=data.filter(a=>Date.now()<a.expiry);
+ if(loc.length!==data.length) localStorage.setItem('foul_acc',JSON.stringify(loc));
+})();
+
 function login(){
  let tk=document.getElementById('tk').value.trim();
  let mk=document.getElementById('mk').value.trim();
  let tb=document.getElementById('thongbao');
  let data=JSON.parse(localStorage.getItem('foul_acc')||"[]");
-
- // TK admin của m - không bao giờ hết hạn
+ 
  if(tk==="TNX08-VIP-0xXH8YnMbPQA" && mk==="TNX-0xM9CWbktyuW"){
    tb.className="ok"; tb.innerHTML="bạn đã đăng nhập thành công (ADMIN)";
    setTimeout(()=>{loginBox.style.display='none';panel.style.display='block'},600); return;
  }
-
  let acc=data.find(a=>a.tk===tk && a.mk===mk);
- if(!acc){
-   tb.className="sai"; tb.innerHTML="Bạn đăng nhập tài khoản hoặc mk sai"; return;
- }
+ if(!acc){ tb.className="sai"; tb.innerHTML="Bạn đăng nhập tài khoản hoặc mk sai"; return; }
+ 
  if(Date.now() > acc.expiry){
-   tb.className="sai"; tb.innerHTML="Tài khoản đã hết hạn! Vui lòng gia hạn";
+   let dataMoi=data.filter(a=>a.tk!==acc.tk);
+   localStorage.setItem('foul_acc',JSON.stringify(dataMoi));
+   tb.className="sai"; tb.innerHTML="Tài khoản đã hết hạn và đã bị thu hồi!";
    return;
  }
  let conlai=Math.ceil((acc.expiry-Date.now())/86400000);
