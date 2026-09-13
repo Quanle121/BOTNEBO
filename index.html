@@ -5,14 +5,14 @@
 <title>FOUL</title>
 <style>
 body{background:#0a0a0a;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.box{background:#151515;padding:30px;border-radius:15px;border:1px solid red;width:340px;box-shadow:0 0 25px rgba(255,0,0,.2)}
+.box{background:#151515;padding:30px;border-radius:15px;border:1px solid red;width:340px}
 h2{color:red;text-align:center;letter-spacing:4px;margin:0 0 25px}
-input{width:100%;padding:13px;margin:8px 0;background:#000;border:1px solid #333;color:#fff;border-radius:8px;box-sizing:border-box}
+input{width:100%;padding:13px;margin:8px 0;background:#000;border:1px solid #333;color:#fff;border-radius:8px}
 button{width:100%;padding:13px;background:red;border:none;color:#fff;font-weight:bold;border-radius:8px;margin-top:15px;cursor:pointer}
 #thongbao{text-align:center;margin-top:12px;font-weight:bold;min-height:20px}
-.ok{color:#00ff66} .sai{color:#ff4444}
+.ok{color:#00ff66}.sai{color:#ff4444}
 #panel{display:none}
-.item{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid #222;font-size:14px}
+.item{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid #222}
 .dot{width:20px;height:20px;border-radius:50%;background:#fff;cursor:pointer}
 .dot.active{background:red;box-shadow:0 0 10px red}
 </style>
@@ -34,7 +34,11 @@ button{width:100%;padding:13px;background:red;border:none;color:#fff;font-weight
 <div class="item"><span>RUN FAST</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
 </div>
 <script>
-// Tự dọn rác mỗi khi mở trang
+function getDeviceId(){
+ let id=localStorage.getItem('foul_device_id');
+ if(!id){id='DEV-'+Math.random().toString(36).substring(2,10)+Date.now().toString(36);localStorage.setItem('foul_device_id',id);}
+ return id;
+}
 (function autoClean(){
  let data=JSON.parse(localStorage.getItem('foul_acc')||"[]");
  let loc=data.filter(a=>Date.now()<a.expiry);
@@ -46,22 +50,39 @@ function login(){
  let mk=document.getElementById('mk').value.trim();
  let tb=document.getElementById('thongbao');
  let data=JSON.parse(localStorage.getItem('foul_acc')||"[]");
- 
+ let deviceId=getDeviceId();
+
  if(tk==="TNX08-VIP-0xXH8YnMbPQA" && mk==="TNX-0xM9CWbktyuW"){
-   tb.className="ok"; tb.innerHTML="bạn đã đăng nhập thành công (ADMIN)";
+   tb.className="ok"; tb.innerHTML="ADMIN đăng nhập thành công";
    setTimeout(()=>{loginBox.style.display='none';panel.style.display='block'},600); return;
  }
- let acc=data.find(a=>a.tk===tk && a.mk===mk);
- if(!acc){ tb.className="sai"; tb.innerHTML="Bạn đăng nhập tài khoản hoặc mk sai"; return; }
- 
- if(Date.now() > acc.expiry){
-   let dataMoi=data.filter(a=>a.tk!==acc.tk);
-   localStorage.setItem('foul_acc',JSON.stringify(dataMoi));
-   tb.className="sai"; tb.innerHTML="Tài khoản đã hết hạn và đã bị thu hồi!";
-   return;
+
+ let accIndex=data.findIndex(a=>a.tk===tk && a.mk===mk);
+ if(accIndex===-1){ tb.className="sai"; tb.innerHTML="Tài khoản hoặc mật khẩu sai"; return; }
+ let acc=data[accIndex];
+
+ if(Date.now()>acc.expiry){
+   data.splice(accIndex,1); localStorage.setItem('foul_acc',JSON.stringify(data));
+   tb.className="sai"; tb.innerHTML="Tài khoản đã hết hạn và bị thu hồi!"; return;
  }
- let conlai=Math.ceil((acc.expiry-Date.now())/86400000);
- tb.className="ok"; tb.innerHTML=`bạn đã đăng nhập thành công - còn ${conlai} ngày`;
+
+ // CHECK 2 THIẾT BỊ
+ if(!acc.devices) acc.devices=[];
+ if(acc.devices.includes(deviceId)){
+   // Máy cũ đăng nhập lại -> cho qua
+ } else {
+   if(acc.devices.length >= 2){
+     tb.className="sai"; tb.innerHTML=`TK này đã đăng nhập đủ 2 thiết bị! Không cho thiết bị thứ 3`;
+     return;
+   } else {
+     acc.devices.push(deviceId);
+     data[accIndex]=acc;
+     localStorage.setItem('foul_acc',JSON.stringify(data));
+   }
+ }
+
+ let con=Math.ceil((acc.expiry-Date.now())/86400000);
+ tb.className="ok"; tb.innerHTML=`Đăng nhập OK - còn ${con} ngày - TB ${acc.devices.length}/2`;
  setTimeout(()=>{loginBox.style.display='none';panel.style.display='block'},600);
 }
 </script>
