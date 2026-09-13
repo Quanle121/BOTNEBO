@@ -1,89 +1,22 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FOUL</title>
-<style>
-body{background:#0a0a0a;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
-.box{background:#151515;padding:30px;border-radius:15px;border:1px solid red;width:340px}
-h2{color:red;text-align:center;letter-spacing:4px;margin:0 0 25px}
-input{width:100%;padding:13px;margin:8px 0;background:#000;border:1px solid #333;color:#fff;border-radius:8px}
-button{width:100%;padding:13px;background:red;border:none;color:#fff;font-weight:bold;border-radius:8px;margin-top:15px;cursor:pointer}
-#thongbao{text-align:center;margin-top:12px;font-weight:bold;min-height:20px}
-.ok{color:#00ff66}.sai{color:#ff4444}
-#panel{display:none}
-.item{display:flex;justify-content:space-between;align-items:center;padding:18px 0;border-bottom:1px solid #222}
-.dot{width:20px;height:20px;border-radius:50%;background:#fff;cursor:pointer}
-.dot.active{background:red;box-shadow:0 0 10px red}
-</style>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FOUL</title>
+<style>body{background:#0a0a0a;color:#fff;font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}.box{background:#151515;padding:30px;border-radius:15px;border:1px solid red;width:340px}h2{color:red;text-align:center;letter-spacing:4px;margin:0 0 25px}input{width:100%;padding:13px;margin:8px 0;background:#000;border:1px solid #333;color:#fff;border-radius:8px}button{width:100%;padding:13px;background:red;border:none;color:#fff;font-weight:bold;border-radius:8px;margin-top:15px} #thongbao{text-align:center;margin-top:12px;font-weight:bold}.ok{color:#00ff66}.sai{color:#ff4444}#panel{display:none}.item{display:flex;justify-content:space-between;padding:18px 0;border-bottom:1px solid #222}.dot{width:20px;height:20px;border-radius:50%;background:#fff;cursor:pointer}.dot.active{background:red}</style>
 </head>
 <body>
-<div id="loginBox" class="box">
-<h2>FOUL</h2>
-<input id="tk" placeholder="Tài khoản">
-<input id="mk" type="password" placeholder="Mật khẩu">
-<button onclick="login()">ĐĂNG NHẬP</button>
-<div id="thongbao"></div>
-</div>
-<div id="panel" class="box">
-<h2>FOUL</h2>
-<div class="item"><span>AIMLOCK V2</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
-<div class="item"><span>MAGIC BULLET</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
-<div class="item"><span>AIM 100%</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
-<div class="item"><span>CHAMS V3</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
-<div class="item"><span>RUN FAST</span><div class="dot" onclick="this.classList.toggle('active')"></div></div>
-</div>
+<div id="loginBox" class="box"><h2>FOUL</h2><input id="tk" placeholder="Tài khoản"><input id="mk" type="password" placeholder="Mật khẩu"><button onclick="login()">ĐĂNG NHẬP</button><div id="thongbao"></div></div>
+<div id="panel" class="box"><h2>FOUL</h2><div class="item"><span>AIMLOCK V2</span><div class="dot" onclick="this.classList.toggle('active')"></div></div><div class="item"><span>MAGIC BULLET</span><div class="dot" onclick="this.classList.toggle('active')"></div></div><div class="item"><span>AIM 100%</span><div class="dot" onclick="this.classList.toggle('active')"></div></div><div class="item"><span>CHAMS V3</span><div class="dot" onclick="this.classList.toggle('active')"></div></div></div>
 <script>
-function getDeviceId(){
- let id=localStorage.getItem('foul_device_id');
- if(!id){id='DEV-'+Math.random().toString(36).substring(2,10)+Date.now().toString(36);localStorage.setItem('foul_device_id',id);}
- return id;
-}
-(function autoClean(){
- let data=JSON.parse(localStorage.getItem('foul_acc')||"[]");
- let loc=data.filter(a=>Date.now()<a.expiry);
- if(loc.length!==data.length) localStorage.setItem('foul_acc',JSON.stringify(loc));
-})();
-
+function getDeviceId(){let id=localStorage.getItem('foul_device_id');if(!id){id='DEV-'+Math.random().toString(36).substring(2,8)+Date.now().toString(36);localStorage.setItem('foul_device_id',id);}return id;}
 function login(){
- let tk=document.getElementById('tk').value.trim();
- let mk=document.getElementById('mk').value.trim();
- let tb=document.getElementById('thongbao');
- let data=JSON.parse(localStorage.getItem('foul_acc')||"[]");
- let deviceId=getDeviceId();
-
- if(tk==="TNX08-VIP-0xXH8YnMbPQA" && mk==="TNX-0xM9CWbktyuW"){
-   tb.className="ok"; tb.innerHTML="ADMIN đăng nhập thành công";
-   setTimeout(()=>{loginBox.style.display='none';panel.style.display='block'},600); return;
- }
-
- let accIndex=data.findIndex(a=>a.tk===tk && a.mk===mk);
- if(accIndex===-1){ tb.className="sai"; tb.innerHTML="Tài khoản hoặc mật khẩu sai"; return; }
- let acc=data[accIndex];
-
- if(Date.now()>acc.expiry){
-   data.splice(accIndex,1); localStorage.setItem('foul_acc',JSON.stringify(data));
-   tb.className="sai"; tb.innerHTML="Tài khoản đã hết hạn và bị thu hồi!"; return;
- }
-
- // CHECK 2 THIẾT BỊ
- if(!acc.devices) acc.devices=[];
- if(acc.devices.includes(deviceId)){
-   // Máy cũ đăng nhập lại -> cho qua
- } else {
-   if(acc.devices.length >= 2){
-     tb.className="sai"; tb.innerHTML=`TK này đã đăng nhập đủ 2 thiết bị! Không cho thiết bị thứ 3`;
-     return;
-   } else {
-     acc.devices.push(deviceId);
-     data[accIndex]=acc;
-     localStorage.setItem('foul_acc',JSON.stringify(data));
-   }
- }
-
- let con=Math.ceil((acc.expiry-Date.now())/86400000);
- tb.className="ok"; tb.innerHTML=`Đăng nhập OK - còn ${con} ngày - TB ${acc.devices.length}/2`;
- setTimeout(()=>{loginBox.style.display='none';panel.style.display='block'},600);
+ let tk=document.getElementById('tk').value.trim();let mk=document.getElementById('mk').value.trim();let tb=document.getElementById('thongbao');let data=JSON.parse(localStorage.getItem('foul_acc')||"[]");let deviceId=getDeviceId();
+ if(tk==="TNX08-VIP-0xXH8YnMbPQA" && mk==="TNX-0xM9CWbktyuW"){tb.className="ok";tb.innerHTML="ADMIN OK";setTimeout(()=>{loginBox.style.display='none';panel.style.display='block'},500);return;}
+ let idx=data.findIndex(a=>a.tk===tk&&a.mk===mk);if(idx==-1){tb.className="sai";tb.innerHTML="Sai TK/MK";return;}
+ let acc=data[idx];
+ if(acc.expiry < 9000000000000 && Date.now() > acc.expiry){data.splice(idx,1);localStorage.setItem('foul_acc',JSON.stringify(data));tb.className="sai";tb.innerHTML="Tài khoản đã hết hạn và bị thu hồi!";return;}
+ if(!acc.devices) acc.devices=[];if(!acc.devices.includes(deviceId)){if(acc.devices.length>=2){tb.className="sai";tb.innerHTML="TK đủ 2 thiết bị rồi!";return;}acc.devices.push(deviceId);data[idx]=acc;localStorage.setItem('foul_acc',JSON.stringify(data));}
+ let con=acc.expiry==9999999999999?"VĨNH VIỄN":Math.ceil((acc.expiry-Date.now())/86400000)+" ngày";
+ tb.className="ok";tb.innerHTML=`OK - HSD: ${con} - TB ${acc.devices.length}/2`;setTimeout(()=>{loginBox.style.display='none';panel.style.display='block'},600);
 }
 </script>
 </body>
