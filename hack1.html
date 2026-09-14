@@ -1,0 +1,61 @@
+-- Script AIMLOCK V2 Free Fire
+local aimlock_v2 = {
+    enabled = false,
+    circle_size = 50, -- Kích thước vòng tròn nhắm mục tiêu
+    speed = 0.5, -- Tốc độ điều chỉnh (0.1-1.0)
+    sensitivity = 1.5, -- Độ nhạy nhắm
+    fov = 120, -- Góc nhìn tìm mục tiêu
+    aim_at = "Head", -- Chỉ nhắm vào đầu đối thủ
+    auto_headshot = true
+}
+
+-- Hàm bật/tắt script
+function toggleAimlock()
+    aimlock_v2.enabled = not aimlock_v2.enabled
+    gg.toast("AIMLOCK V2: " .. (aimlock_v2.enabled and "BẬT" or "TẮT"))
+end
+
+-- Hàm cập nhật cài đặt
+function updateSettings()
+    local choice = gg.multiChoice({
+        "Cài đặt kích thước vòng tròn: " .. aimlock_v2.circle_size,
+        "Cài đặt tốc độ: " .. aimlock_v2.speed,
+        "Cài đặt độ nhạy: " .. aimlock_v2.sensitivity,
+        "Cài đặt góc FOV: " .. aimlock_v2.fov,
+        "Bật/tắt auto headshot: " .. (aimlock_v2.auto_headshot and "BẬT" or "TẮT"),
+        "Quay lại menu chính"
+    }, nil, "CÀI ĐẶT AIMLOCK V2")
+    
+    if choice == 1 then
+        local size = gg.input("Nhập kích thước vòng tròn (30-100):", tostring(aimlock_v2.circle_size))
+        if size and tonumber(size) then aimlock_v2.circle_size = math.clamp(tonumber(size),30,100) end
+    elseif choice == 2 then
+        local speed = gg.input("Nhập tốc độ (0.1-1.0):", tostring(aimlock_v2.speed))
+        if speed and tonumber(speed) then aimlock_v2.speed = math.clamp(tonumber(speed),0.1,1.0) end
+    elseif choice == 3 then
+        local sens = gg.input("Nhập độ nhạy (0.5-3.0):", tostring(aimlock_v2.sensitivity))
+        if sens and tonumber(sens) then aimlock_v2.sensitivity = math.clamp(tonumber(sens),0.5,3.0) end
+    elseif choice == 4 then
+        local fov = gg.input("Nhập góc FOV (60-180):", tostring(aimlock_v2.fov))
+        if fov and tonumber(fov) then aimlock_v2.fov = math.clamp(tonumber(fov),60,180) end
+    elseif choice == 5 then
+        aimlock_v2.auto_headshot = not aimlock_v2.auto_headshot
+    end
+    if choice ~= 6 then updateSettings() end
+end
+
+-- Menu chính
+function mainMenu()
+    local choice = gg.multiChoice({
+        "Bật/Tắt AIMLOCK V2",
+        "Cài đặt chi tiết",
+        "Thoát"
+    }, nil, "MENU AIMLOCK V2")
+    
+    if choice == 1 then toggleAimlock()
+    elseif choice == 2 then updateSettings()
+    else os.exit() end
+    mainMenu()
+end
+
+mainMenu()
